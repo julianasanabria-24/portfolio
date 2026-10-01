@@ -1,0 +1,74 @@
+---
+import { projects } from '../data/projects';
+import Carousel from './Carousel.astro';
+import ProjectCover from './ProjectCover.astro';
+
+const featured = projects.filter((p) => p.featured);
+---
+
+<section class="section" id="destacados">
+  <div class="container reveal">
+    <span class="eyebrow">casos de estudio</span>
+    <h2>Trabajos destacados</h2>
+  </div>
+  <div class="wide">
+    <Carousel label="Trabajos destacados">
+      {
+        featured.map((p, i) => (
+          <a class="slide" href={`/work/${p.slug}`}>
+            <ProjectCover project={p} />
+            <div class="info">
+              <span class="num">0{i + 1}</span>
+              <div>
+                <h3>{p.title}</h3>
+                <p class="muted">{p.result}</p>
+              </div>
+              <span class="go" aria-hidden="true">↗</span>
+            </div>
+          </a>
+        ))
+      }
+    </Carousel>
+  </div>
+</section>
+
+<style>
+  .wide {
+    --slide-w: min(88%, 720px);
+  }
+  .slide :global(.cover) {
+    aspect-ratio: 16 / 9;
+  }
+  .slide {
+    display: block;
+    text-decoration: none;
+  }
+  .info {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 1rem;
+    align-items: start;
+    margin-top: 1rem;
+  }
+  .num {
+    font-family: var(--font-hand);
+    color: var(--coral);
+  }
+  h3 {
+    margin: 0 0 0.25rem;
+  }
+  .go {
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    border: 1.5px solid var(--fg);
+    transition: all 0.3s var(--ease);
+  }
+  .slide:hover .go {
+    background: var(--gold);
+    color: var(--navy);
+    rotate: 45deg;
+  }
+</style>

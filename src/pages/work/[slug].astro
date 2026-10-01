@@ -1,0 +1,241 @@
+---
+import Base from '../../layouts/Base.astro';
+import ProjectCover from '../../components/ProjectCover.astro';
+import { projects, type Project } from '../../data/projects';
+
+export function getStaticPaths() {
+  return projects.map((project, i) => ({
+    params: { slug: project.slug },
+    props: { project, next: projects[(i + 1) % projects.length] },
+  }));
+}
+
+interface Props {
+  project: Project;
+  next: Project;
+}
+
+const { project, next } = Astro.props;
+const total = project.slides.length + 2; // portada + slides + siguiente
+---
+
+<Base title={project.title} description={project.summary} showFooter={false}>
+  <div class="deck" id="deck" style={`--c:${project.color}`}>
+    <section class="slide intro" id="s-0" data-slide>
+      <div class="container two">
+        <div>
+          <a class="back" href="/#work">← Todos los proyectos</a>
+          <span class="eyebrow">{project.year} · {project.categories.join(' / ')}</span>
+          <h1>{project.title}</h1>
+          <p class="lead">{project.summary}</p>
+          <p class="result sticker" style="--r:-2deg">★ {project.result}</p>
+        </div>
+        <ProjectCover project={project} />
+      </div>
+    </section>
+
+    {
+      project.slides.map((s, i) => (
+        <section class={`slide ${i % 2 ? 'alt' : ''}`} id={`s-${i + 1}`} data-slide>
+          <div class="container two">
+            <div>
+              <span class="eyebrow">
+                0{i + 1} · {s.kicker}
+              </span>
+              <h2>{s.title}</h2>
+              <p class="muted">{s.text}</p>
+            </div>
+            <div class="media tape">
+              {s.image ? <img src={s.image} alt={s.title} loading="lazy" decoding="async" /> : <div class="ph">imagen / video</div>}
+            </div>
+          </div>
+        </section>
+      ))
+    }
+
+    <section class="slide next band-dark" id={`s-${total - 1}`} data-slide>
+      <a class="container next-link" href={`/work/${next.slug}`}>
+        <span class="eyebrow">siguiente caso</span>
+        <h2>{next.title} →</h2>
+        <p class="muted">{next.summary}</p>
+      </a>
+    </section>
+  </div>
+
+  <nav class="pager" aria-label="Diapositivas">
+    <span class="count"><span id="current">1</span> / {total}</span>
+    <ol>
+      {
+        Array.from({ length: total }, (_, i) => (
+          <li>
+            <a href={`#s-${i}`} aria-label={`Ir a la diapositiva ${i + 1}`} />
+          </li>
+        ))
+      }
+    </ol>
+  </nav>
+</Base>
+
+<script>
+  const slides = [...document.querySelectorAll<HTMLElement>('[data-slide]')];
+  const dots = [...document.querySelectorAll<HTMLAnchorElement>('.pager a')];
+  const current = document.getElementById('current')!;
+  let index = 0;
+
+  const setActive = (i: number) => {
+    index = i;
+    current.textContent = String(i + 1);
+    dots.forEach((d, j) => d.toggleAttribute('aria-current', j === i));
+  };
+
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const e of entries) if (e.isIntersecting) setActive(slides.indexOf(e.target as HTMLElement));
+    },
+    { threshold: 0.55 },
+  );
+  slides.forEach((s) => io.observe(s));
+
+  // Navegación con teclado entre diapositivas
+  document.addEventListener('keydown', (e) => {
+    if ((e.target as HTMLElement).closest('input, textarea')) return;
+    const go = (i: number) => slides[Math.max(0, Math.min(slides.length - 1, i))].scrollIntoView({ behavior: 'smooth' });
+    if (e.key === 'ArrowDown' || e.key === 'PageDown') (e.preventDefault(), go(index + 1));
+    if (e.key === 'ArrowUp' || e.key === 'PageUp') (e.preventDefault(), go(index - 1));
+  });
+</script>
+
+<style>
+  /* Escritorio: diapositivas a pantalla completa con snap */
+  :global(html:has(.deck)) {
+    scroll-snap-type: y mandatory;
+  }
+  .slide {
+    min-height: 100svh;
+    display: grid;
+    align-items: center;
+    padding-block: 7rem 4rem;
+    scroll-snap-align: start;
+  }
+  .slide.alt {
+    background: var(--bg-alt);
+  }
+  .intro {
+    background: radial-gradient(circle at 85% 20%, color-mix(in srgb, var(--c) 45%, transparent), transparent 55%);
+  }
+  .two {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(2rem, 6vw, 5rem);
+    align-items: center;
+  }
+  .back {
+    display: block;
+    width: fit-content;
+    margin-bottom: 2rem;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .lead {
+    font-size: 1.3rem;
+  }
+  .result {
+    margin-top: 1rem;
+    background: var(--c);
+  }
+  .media {
+    aspect-ratio: 4 / 3;
+    background: var(--card);
+    border: 2px solid var(--fg);
+    border-radius: var(--radius);
+    rotate: 1.5deg;
+  }
+  .media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: inherit;
+  }
+  .ph {
+    height: 100%;
+    display: grid;
+    place-items: center;
+    font-family: var(--font-hand);
+    color: var(--fg-muted);
+    border-radius: inherit;
+    background: repeating-linear-gradient(45deg, transparent 0 14px, color-mix(in srgb, var(--c) 30%, transparent) 14px 28px);
+  }
+  .next-link {
+    display: block;
+    text-decoration: none;
+  }
+  .next-link h2 {
+    font-size: clamp(3rem, 10vw, 8rem);
+    transition: color 0.3s;
+  }
+  .next-link:hover h2 {
+    color: var(--gold);
+  }
+
+  .pager {
+    position: fixed;
+    right: 1.5rem;
+    top: 50%;
+    translate: 0 -50%;
+    z-index: 40;
+    display: grid;
+    justify-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 0.5rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--bg) 94%, transparent);
+    backdrop-filter: blur(10px);
+    border: 1.5px solid var(--line);
+  }
+  .count {
+    font-size: 0.75rem;
+    font-weight: 600;
+    writing-mode: vertical-rl;
+  }
+  .pager ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+  .pager a {
+    display: block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1.5px solid var(--fg);
+    transition: all 0.3s var(--ease);
+  }
+  .pager a[aria-current] {
+    background: var(--coral);
+    border-color: var(--coral);
+    height: 24px;
+    border-radius: 999px;
+  }
+
+  /* Mobile: scroll vertical normal */
+  @media (max-width: 760px) {
+    :global(html:has(.deck)) {
+      scroll-snap-type: none;
+    }
+    .slide {
+      min-height: auto;
+      padding-block: 6rem 3rem;
+    }
+    .intro {
+      padding-top: 7rem;
+    }
+    .two {
+      grid-template-columns: 1fr;
+    }
+    .pager {
+      display: none;
+    }
+  }
+</style>

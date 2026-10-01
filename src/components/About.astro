@@ -1,0 +1,111 @@
+---
+import info from '../data/info.json';
+
+const { about, photo, name } = info;
+
+const colors = ['var(--gold)', 'var(--pink)', 'var(--sky)', 'var(--coral)', 'var(--cream)', 'var(--gold)'];
+---
+
+<section class="section" id="about">
+  <div class="container grid">
+    <div class="photo tape reveal">
+      {photo ? <img class="me" src={photo} alt={`Retrato de ${name}`} /> : <div class="placeholder">tu foto<br />aquí</div>}
+      <span class="sticker note" style="--r:8deg; background: var(--pink)">curiosa ✶</span>
+    </div>
+
+    <div class="text reveal">
+      <span class="eyebrow">sobre mí</span>
+      <h2>{about.intro}</h2>
+      {about.body.map((p) => <p class="muted">{p}</p>)}
+
+      <h3 class="skills-title">Lo que hago</h3>
+      <ul class="skills">
+        {
+          about.skills.design.map((s, i) => (
+            <li class="sticker" style={`--r:${i % 2 ? 3 : -3}deg; background:${colors[i]}`}>
+              {s}
+            </li>
+          ))
+        }
+      </ul>
+
+      <h3 class="skills-title">Cómo trabajo</h3>
+      <ul class="soft">
+        {about.skills.soft.map((s) => <li>{s}</li>)}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: clamp(2rem, 6vw, 6rem);
+    align-items: start;
+  }
+  .photo {
+    position: sticky;
+    top: 7rem;
+    aspect-ratio: 4 / 5;
+    padding: 0.9rem 0.9rem 3rem;
+    background: #fff;
+    box-shadow: 0 12px 30px rgba(20, 33, 61, 0.15);
+    rotate: -3deg;
+  }
+  .me {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .placeholder {
+    height: 100%;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    font-family: var(--font-hand);
+    color: var(--navy);
+    background: repeating-linear-gradient(45deg, var(--sand) 0 12px, #f7eddf 12px 24px);
+  }
+  .note {
+    position: absolute;
+    right: -1rem;
+    bottom: 1rem;
+  }
+  h2 {
+    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  }
+  .skills-title {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-top: 2.5rem;
+  }
+  .skills,
+  .soft {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .soft li {
+    padding: 0.35rem 0.9rem;
+    border: 1.5px dashed var(--fg-muted);
+    border-radius: 999px;
+    font-size: 0.95rem;
+  }
+  @media (max-width: 860px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+    .photo {
+      position: relative;
+      top: 0;
+      max-width: 320px;
+    }
+  }
+</style>

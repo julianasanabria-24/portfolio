@@ -1,0 +1,129 @@
+---
+import site from '../data/info.json';
+---
+
+<section class="section" id="contacto">
+  <div class="container">
+    <div class="ticket reveal">
+      <div class="main">
+        <span class="eyebrow">admit one ✶</span>
+        <h2>¿Tienes una idea? Hagámosla crecer.</h2>
+        <p class="muted">Branding, UX/UI, ilustración o web. Primera consulta gratuita.</p>
+        <div class="actions">
+          <button class="btn" data-open-contact>Start your project</button>
+          <a class="btn btn--ghost" href={`mailto:${site.email}`}>Escríbeme</a>
+        </div>
+      </div>
+
+      <div class="stub">
+        <h3>Newsletter</h3>
+        <p>Procesos, experimentos y recursos. Una vez al mes.</p>
+        <form id="newsletter" data-endpoint={site.formEndpoint}>
+          <label class="visually-hidden" for="nl-email">Email</label>
+          <input id="nl-email" name="email" type="email" placeholder="tu@email.com" required />
+          <button class="btn btn--gold" type="submit">Suscribirme</button>
+        </form>
+        <p class="nl-status" role="status" aria-live="polite"></p>
+        <div class="barcode" aria-hidden="true"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const form = document.getElementById('newsletter') as HTMLFormElement;
+  const status = document.querySelector('.nl-status')!;
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const endpoint = form.dataset.endpoint;
+    if (!endpoint) {
+      status.textContent = '¡Gracias! (Newsletter en preparación.)';
+      form.reset();
+      return;
+    }
+    try {
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { Accept: 'application/json' },
+      });
+      if (!res.ok) throw new Error();
+      status.textContent = '¡Listo! Revisa tu correo.';
+      form.reset();
+    } catch {
+      status.textContent = 'Algo falló. Inténtalo de nuevo.';
+    }
+  });
+</script>
+
+<style>
+  .ticket {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    border: 2px solid var(--fg);
+    border-radius: var(--radius);
+    background: var(--bg-alt);
+    box-shadow: 8px 8px 0 var(--coral);
+    overflow: hidden;
+  }
+  .main {
+    padding: clamp(2rem, 5vw, 4rem);
+  }
+  .main h2 {
+    max-width: 14ch;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+  .stub {
+    position: relative;
+    padding: clamp(2rem, 4vw, 3rem);
+    background: var(--gold);
+    color: var(--navy);
+    border-left: 3px dashed var(--navy);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .stub h3 {
+    margin: 0;
+  }
+  form {
+    display: grid;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+  input {
+    font: inherit;
+    padding: 0.75rem 1rem;
+    border-radius: 999px;
+    border: 2px solid var(--navy);
+    background: var(--cream);
+    color: var(--navy);
+  }
+  .stub .btn {
+    background: var(--navy);
+    color: var(--cream);
+    justify-content: center;
+  }
+  .nl-status:empty {
+    display: none;
+  }
+  .barcode {
+    margin-top: auto;
+    padding-top: 1rem;
+    background-clip: content-box;
+  }
+  @media (max-width: 800px) {
+    .ticket {
+      grid-template-columns: 1fr;
+    }
+    .stub {
+      border-left: none;
+      border-top: 3px dashed var(--navy);
+    }
+  }
+</style>

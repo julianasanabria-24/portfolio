@@ -1,0 +1,164 @@
+---
+import site from '../data/info.json';
+---
+
+<div class="overlay" id="contact-overlay" hidden></div>
+<aside class="panel" id="contact-panel" role="dialog" aria-modal="true" aria-labelledby="contact-title" aria-hidden="true" inert>
+  <button class="close" id="contact-close" aria-label="Cerrar">×</button>
+  <span class="eyebrow">¡hola!</span>
+  <h2 id="contact-title">Trabajemos juntos</h2>
+  <p class="muted">Cuéntame tu idea. La primera conversación es gratis.</p>
+
+  <form id="contact-form" data-endpoint={site.formEndpoint} data-email={site.email}>
+    <label>Nombre<input name="nombre" required autocomplete="name" /></label>
+    <label>Email<input name="email" type="email" required autocomplete="email" /></label>
+    <label><span>Redes / web <span class="muted">(opcional)</span></span><input name="redes" placeholder="@usuario o URL" /></label>
+    <label>Comentarios<textarea name="mensaje" rows="5" required></textarea></label>
+    <button class="btn" type="submit">Enviar mensaje</button>
+    <p class="status" role="status" aria-live="polite"></p>
+  </form>
+
+  <p class="alt">O escríbeme directamente a <a href={`mailto:${site.email}`}>{site.email}</a></p>
+</aside>
+
+<script>
+  const panel = document.getElementById('contact-panel')!;
+  const overlay = document.getElementById('contact-overlay')!;
+  const form = document.getElementById('contact-form') as HTMLFormElement;
+  const status = form.querySelector('.status')!;
+  let lastFocus: Element | null = null;
+
+  const open = () => {
+    lastFocus = document.activeElement;
+    overlay.hidden = false;
+    panel.removeAttribute('inert');
+    panel.setAttribute('aria-hidden', 'false');
+    requestAnimationFrame(() => {
+      panel.classList.add('open');
+      overlay.classList.add('open');
+    });
+    document.body.style.overflow = 'hidden';
+    (panel.querySelector('input') as HTMLInputElement).focus();
+  };
+  const close = () => {
+    panel.classList.remove('open');
+    overlay.classList.remove('open');
+    panel.setAttribute('inert', '');
+    panel.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    setTimeout(() => (overlay.hidden = true), 400);
+    (lastFocus as HTMLElement | null)?.focus();
+  };
+
+  document.addEventListener('click', (e) => {
+    if ((e.target as HTMLElement).closest('[data-open-contact]')) open();
+  });
+  overlay.addEventListener('click', close);
+  document.getElementById('contact-close')!.addEventListener('click', close);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && panel.classList.contains('open')) close();
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = new FormData(form);
+    const endpoint = form.dataset.endpoint;
+    if (!endpoint) {
+      // Sin backend configurado: abre el cliente de correo con el mensaje
+      const body = `Nombre: ${data.get('nombre')}\nEmail: ${data.get('email')}\nRedes: ${data.get('redes')}\n\n${data.get('mensaje')}`;
+      location.href = `mailto:${form.dataset.email}?subject=${encodeURIComponent('Nuevo proyecto')}&body=${encodeURIComponent(body)}`;
+      return;
+    }
+    status.textContent = 'Enviando…';
+    try {
+      const res = await fetch(endpoint, { method: 'POST', body: data, headers: { Accept: 'application/json' } });
+      if (!res.ok) throw new Error();
+      form.reset();
+      status.textContent = '¡Gracias! Te responderé pronto.';
+    } catch {
+      status.textContent = 'No se pudo enviar. Escríbeme por email.';
+    }
+  });
+</script>
+
+<style>
+  .overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    background: rgba(20, 33, 61, 0.45);
+    opacity: 0;
+    transition: opacity 0.4s var(--ease);
+  }
+  .overlay.open {
+    opacity: 1;
+  }
+  .panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 91;
+    width: min(100%, 480px);
+    padding: 3rem 2rem 2rem;
+    overflow-y: auto;
+    background: var(--bg);
+    color: var(--fg);
+    border-left: 2px solid var(--fg);
+    transform: translateX(105%);
+    transition: transform 0.45s var(--ease);
+  }
+  .panel.open {
+    transform: none;
+  }
+  .close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1.5px solid var(--line);
+    background: none;
+    color: inherit;
+    font-size: 1.6rem;
+    cursor: pointer;
+  }
+  form {
+    display: grid;
+    gap: 1rem;
+    margin-block: 1.5rem;
+  }
+  label {
+    display: grid;
+    gap: 0.35rem;
+    font-weight: 500;
+    font-size: 0.95rem;
+  }
+  input,
+  textarea {
+    font: inherit;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    border: 1.5px solid var(--line);
+    background: var(--card);
+    color: var(--fg);
+    resize: vertical;
+  }
+  input:focus,
+  textarea:focus {
+    outline: none;
+    border-color: var(--coral);
+  }
+  form .btn {
+    justify-self: start;
+  }
+  .status:empty {
+    display: none;
+  }
+  .alt {
+    font-size: 0.95rem;
+    border-top: 1px dashed var(--line);
+    padding-top: 1rem;
+  }
+</style>

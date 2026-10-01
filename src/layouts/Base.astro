@@ -1,0 +1,86 @@
+---
+import '../styles/global.css';
+import Nav from '../components/Nav.astro';
+import ContactPanel from '../components/ContactPanel.astro';
+import Footer from '../components/Footer.astro';
+import site from '../data/info.json';
+
+interface Props {
+  title?: string;
+  description?: string;
+  showFooter?: boolean;
+}
+
+const { title, description = site.tagline, showFooter = true } = Astro.props;
+const fullTitle = title ? `${title} — ${site.name}` : `${site.name} · ${site.role}`;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Rock+Salt&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    />
+    <script is:inline>
+      // Aplica el tema antes de pintar para evitar parpadeo
+      (function () {
+        let t = null;
+        try { t = localStorage.getItem('theme'); } catch (e) {}
+        if (!t) t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.dataset.theme = t;
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Saltar al contenido</a>
+    <Nav />
+    <main id="main">
+      <slot />
+    </main>
+    {showFooter && <Footer />}
+    <ContactPanel />
+
+    <script>
+      // Revela elementos al entrar en pantalla
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (e.isIntersecting) {
+              e.target.classList.add('is-visible');
+              io.unobserve(e.target);
+            }
+          }
+        },
+        { threshold: 0.15 },
+      );
+      document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+    </script>
+  </body>
+</html>
+
+<style>
+  .skip {
+    position: absolute;
+    left: 1rem;
+    top: -4rem;
+    z-index: 100;
+    padding: 0.5rem 1rem;
+    background: var(--gold);
+    color: var(--navy);
+    border-radius: 999px;
+  }
+  .skip:focus {
+    top: 1rem;
+  }
+</style>

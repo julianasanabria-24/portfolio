@@ -1,0 +1,306 @@
+---
+import site from '../data/info.json';
+---
+
+<section class="hero" id="top">
+  <canvas id="hero-shader" aria-hidden="true"></canvas>
+
+  <div class="container content">
+    <p class="eyebrow">hola, soy</p>
+    <h1>{site.name}</h1>
+    <p class="lead">
+      <strong>{site.role}</strong> · {site.tagline}
+    </p>
+    <div class="ctas">
+      <a class="btn" href="#work">Ver proyectos</a>
+      <button class="btn btn--ghost" data-open-contact>Work with me</button>
+    </div>
+
+    <ul class="stickers" aria-label="Áreas">
+      <li class="sticker" style="--r:-6deg">UX/UI</li>
+      <li class="sticker" style="--r:4deg; background: var(--pink)">Branding</li>
+      <li class="sticker" style="--r:-3deg; background: var(--sky)">3D</li>
+      <li class="sticker" style="--r:7deg; background: var(--cream)">Ilustración</li>
+    </ul>
+  </div>
+
+  <div class="player ticket" id="player" data-src={site.audio.src}>
+    <button class="play" id="play" aria-label="Reproducir mi trayectoria en rap">
+      <svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z" /></svg>
+      <svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h4v16H6zM14 4h4v16h-4z" /></svg>
+    </button>
+    <div class="info">
+      <span class="label">now playing</span>
+      <span class="title">{site.audio.title}</span>
+      <div class="bar"><span id="progress"></span></div>
+    </div>
+    <div class="barcode" aria-hidden="true"></div>
+  </div>
+</section>
+
+<script>
+  // ===== Shader: manchas cálidas que fluyen lentamente =====
+  const canvas = document.getElementById('hero-shader') as HTMLCanvasElement;
+  const gl = canvas.getContext('webgl', { antialias: false, premultipliedAlpha: false });
+
+  if (gl) {
+    const vert = `attribute vec2 p; void main(){ gl_Position = vec4(p,0.,1.); }`;
+    const frag = `
+      precision mediump float;
+      uniform vec2 uRes; uniform float uTime; uniform float uDark;
+      vec3 c1 = vec3(1.0, 0.855, 0.247);  // dorado
+      vec3 c2 = vec3(1.0, 0.435, 0.349);  // coral
+      vec3 c3 = vec3(0.561, 0.827, 1.0);  // celeste
+      vec3 c4 = vec3(1.0, 0.561, 0.78);   // rosa
+      float blob(vec2 uv, vec2 c, float r){ return smoothstep(r, 0.0, length(uv - c)); }
+      void main(){
+        vec2 uv = gl_FragCoord.xy / uRes;
+        uv.x *= uRes.x / uRes.y;
+        float t = uTime * 0.12;
+        float ar = uRes.x / uRes.y;
+        vec3 bgL = vec3(1.0, 0.976, 0.945);
+        vec3 bgD = vec3(0.078, 0.129, 0.239);
+        vec3 col = mix(bgL, bgD, uDark);
+        float k = mix(0.85, 0.55, uDark);
+        col = mix(col, c1, k * blob(uv, vec2(ar*(0.75+0.15*sin(t*1.3)), 0.7+0.15*cos(t)), 0.65));
+        col = mix(col, c2, k * 0.8 * blob(uv, vec2(ar*(0.9+0.1*cos(t*0.9)), 0.25+0.2*sin(t*1.1)), 0.5));
+        col = mix(col, c3, k * 0.8 * blob(uv, vec2(ar*(0.15+0.12*sin(t*0.7)), 0.15+0.1*cos(t*1.4)), 0.55));
+        col = mix(col, c4, k * 0.7 * blob(uv, vec2(ar*(0.55+0.2*cos(t*0.8)), 0.05+0.1*sin(t)), 0.4));
+        // grano de papel
+        float n = fract(sin(dot(gl_FragCoord.xy, vec2(12.9898,78.233))) * 43758.5453);
+        col += (n - 0.5) * 0.04;
+        gl_FragColor = vec4(col, 1.0);
+      }`;
+
+    const compile = (type: number, src: string) => {
+      const s = gl.createShader(type)!;
+      gl.shaderSource(s, src);
+      gl.compileShader(s);
+      return s;
+    };
+    const prog = gl.createProgram()!;
+    gl.attachShader(prog, compile(gl.VERTEX_SHADER, vert));
+    gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, frag));
+    gl.linkProgram(prog);
+    gl.useProgram(prog);
+
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(prog, 'p');
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+
+    const uRes = gl.getUniformLocation(prog, 'uRes');
+    const uTime = gl.getUniformLocation(prog, 'uTime');
+    const uDark = gl.getUniformLocation(prog, 'uDark');
+
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let dark = document.documentElement.dataset.theme === 'dark' ? 1 : 0;
+    let darkTarget = dark;
+    let visible = true;
+    let raf = 0;
+
+    const resize = () => {
+      const dpr = Math.min(devicePixelRatio, 1.5);
+      canvas.width = canvas.clientWidth * dpr;
+      canvas.height = canvas.clientHeight * dpr;
+      gl.viewport(0, 0, canvas.width, canvas.height);
+    };
+
+    const draw = (ms: number) => {
+      dark += (darkTarget - dark) * 0.08;
+      gl.uniform2f(uRes, canvas.width, canvas.height);
+      gl.uniform1f(uTime, reduced ? 8 : ms / 1000);
+      gl.uniform1f(uDark, dark);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+      const settling = Math.abs(darkTarget - dark) > 0.002;
+      if (visible && (!reduced || settling)) raf = requestAnimationFrame(draw);
+    };
+    const start = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(draw);
+    };
+
+    resize();
+    start();
+    canvas.classList.add('ready');
+    addEventListener('resize', () => {
+      resize();
+      start();
+    });
+    addEventListener('themechange', () => {
+      darkTarget = document.documentElement.dataset.theme === 'dark' ? 1 : 0;
+      start();
+    });
+    // Pausa el shader cuando el hero no está en pantalla
+    new IntersectionObserver(([e]) => {
+      visible = e.isIntersecting;
+      if (visible) start();
+    }).observe(canvas);
+  }
+
+  // ===== Reproductor de audio =====
+  const player = document.getElementById('player')!;
+  const btn = document.getElementById('play')!;
+  const progress = document.getElementById('progress')!;
+  let audio: HTMLAudioElement | null = null;
+
+  btn.addEventListener('click', () => {
+    if (!audio) {
+      audio = new Audio(player.dataset.src);
+      audio.addEventListener('timeupdate', () => {
+        progress.style.width = `${(audio!.currentTime / audio!.duration) * 100 || 0}%`;
+      });
+      audio.addEventListener('ended', () => player.classList.remove('playing'));
+      audio.addEventListener('error', () => {
+        player.classList.remove('playing');
+        player.classList.add('missing');
+        player.querySelector('.title')!.textContent = 'Muy pronto 🎤';
+      });
+    }
+    if (audio.paused) {
+      audio.play().catch(() => {});
+      player.classList.add('playing');
+    } else {
+      audio.pause();
+      player.classList.remove('playing');
+    }
+  });
+</script>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: grid;
+    align-items: center;
+    padding-block: 8rem 6rem;
+    overflow: hidden;
+    background: radial-gradient(circle at 80% 30%, var(--gold), transparent 50%),
+      radial-gradient(circle at 10% 90%, var(--sky), transparent 45%), var(--bg);
+  }
+  canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 1s;
+  }
+  canvas.ready {
+    opacity: 1;
+  }
+  .content {
+    position: relative;
+  }
+  h1 {
+    margin-bottom: 0.25em;
+    max-width: 10ch;
+  }
+  .lead {
+    font-size: clamp(1.15rem, 2vw, 1.4rem);
+    max-width: 36ch;
+  }
+  .ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+  .stickers {
+    list-style: none;
+    padding: 0;
+    margin: 3rem 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .player {
+    position: absolute;
+    right: var(--gutter);
+    bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    background: var(--cream);
+    color: var(--navy);
+    border: 2px solid var(--navy);
+    border-radius: 0.75rem;
+    box-shadow: 4px 4px 0 var(--navy);
+    rotate: 2deg;
+    max-width: calc(100% - 2 * var(--gutter));
+  }
+  .player .barcode {
+    width: 70px;
+    height: 36px;
+    border-left: 2px dashed var(--navy);
+    padding-left: 0.75rem;
+    background-clip: content-box;
+  }
+  .play {
+    flex: none;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: none;
+    background: var(--coral);
+    color: var(--cream);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+  }
+  .play svg {
+    width: 20px;
+    fill: currentColor;
+  }
+  .i-pause,
+  .playing .i-play {
+    display: none;
+  }
+  .playing .i-pause {
+    display: block;
+  }
+  .info {
+    display: grid;
+    min-width: 0;
+  }
+  .label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0.6;
+  }
+  .title {
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .bar {
+    height: 4px;
+    margin-top: 0.35rem;
+    background: rgba(20, 33, 61, 0.15);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .bar span {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: var(--coral);
+  }
+
+  @media (max-width: 760px) {
+    .player {
+      left: var(--gutter);
+      right: auto;
+      bottom: 1.25rem;
+    }
+    .player .barcode {
+      display: none;
+    }
+  }
+</style>

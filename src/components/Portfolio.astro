@@ -1,0 +1,147 @@
+---
+import { projects, categories } from '../data/projects';
+import ProjectCover from './ProjectCover.astro';
+---
+
+<section class="section" id="work">
+  <div class="container">
+    <div class="head reveal">
+      <div>
+        <span class="eyebrow">portafolio</span>
+        <h2>Proyectos</h2>
+      </div>
+      <div class="filters" role="group" aria-label="Filtrar por categoría">
+        <button class="chip" aria-pressed="true" data-filter="all">Todo</button>
+        {categories.map((c) => <button class="chip" aria-pressed="false" data-filter={c}>{c}</button>)}
+      </div>
+    </div>
+
+    <ul class="grid">
+      {
+        projects.map((p) => (
+          <li class="item" data-categories={p.categories.join('|')}>
+            <a href={`/work/${p.slug}`}>
+              <ProjectCover project={p} />
+              <div class="meta">
+                <h3>{p.title}</h3>
+                <span class="year">{p.year}</span>
+              </div>
+              <p class="muted">{p.summary}</p>
+              <ul class="tags">
+                {p.categories.map((c) => <li>{c}</li>)}
+              </ul>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="empty muted" hidden>Pronto habrá proyectos en esta categoría.</p>
+  </div>
+</section>
+
+<script>
+  const chips = document.querySelectorAll<HTMLButtonElement>('#work .chip');
+  const items = document.querySelectorAll<HTMLElement>('#work .item');
+  const empty = document.querySelector<HTMLElement>('#work .empty')!;
+
+  chips.forEach((chip) =>
+    chip.addEventListener('click', () => {
+      const f = chip.dataset.filter!;
+      chips.forEach((c) => c.setAttribute('aria-pressed', String(c === chip)));
+      let shown = 0;
+      items.forEach((it) => {
+        const match = f === 'all' || it.dataset.categories!.split('|').includes(f);
+        it.hidden = !match;
+        if (match) shown++;
+      });
+      empty.hidden = shown > 0;
+    }),
+  );
+</script>
+
+<style>
+  .head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+  h2 {
+    margin: 0;
+  }
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .chip {
+    font: 500 0.95rem var(--font-body);
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    border: 1.5px solid var(--fg);
+    background: transparent;
+    color: var(--fg);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .chip[aria-pressed='true'] {
+    background: var(--fg);
+    color: var(--bg);
+  }
+  .grid {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+  }
+  .item a {
+    display: block;
+    text-decoration: none;
+  }
+  .item:nth-child(3n + 2) {
+    translate: 0 2rem;
+  }
+  .meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-top: 1rem;
+  }
+  h3 {
+    margin: 0;
+  }
+  .year {
+    font-size: 0.9rem;
+    color: var(--fg-muted);
+  }
+  .item p {
+    margin: 0.35rem 0 0.75rem;
+  }
+  .tags {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+  .tags li {
+    font-size: 0.8rem;
+    padding: 0.15rem 0.6rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--fg) 8%, transparent);
+  }
+  .empty {
+    text-align: center;
+    padding: 3rem 0;
+  }
+  @media (max-width: 700px) {
+    .item:nth-child(3n + 2) {
+      translate: none;
+    }
+  }
+</style>

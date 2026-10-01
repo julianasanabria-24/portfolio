@@ -1,0 +1,79 @@
+---
+// Carrusel accesible basado en scroll-snap: funciona con swipe, trackpad y botones.
+interface Props {
+  label: string;
+}
+const { label } = Astro.props;
+---
+
+<div class="carousel" data-carousel role="region" aria-roledescription="carrusel" aria-label={label}>
+  <div class="track" data-track tabindex="0">
+    <slot />
+  </div>
+  <div class="controls">
+    <button class="arrow" data-prev aria-label="Anterior">←</button>
+    <button class="arrow" data-next aria-label="Siguiente">→</button>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-carousel]').forEach((root) => {
+    const track = root.querySelector<HTMLElement>('[data-track]')!;
+    const step = (dir: number) => {
+      const slide = track.firstElementChild as HTMLElement | null;
+      const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+      track.scrollBy({ left: dir * ((slide?.offsetWidth ?? track.clientWidth) + gap), behavior: 'smooth' });
+    };
+    root.querySelector('[data-prev]')!.addEventListener('click', () => step(-1));
+    root.querySelector('[data-next]')!.addEventListener('click', () => step(1));
+    track.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') step(1);
+      if (e.key === 'ArrowLeft') step(-1);
+    });
+  });
+</script>
+
+<style>
+  .track {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: var(--slide-w, min(85%, 420px));
+    gap: 1.5rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    --edge: max(var(--gutter), calc((100% - var(--maxw)) / 2 + var(--gutter)));
+    scroll-padding-inline: var(--edge);
+    padding: 1rem var(--edge) 2rem;
+    scrollbar-width: none;
+  }
+  .track::-webkit-scrollbar {
+    display: none;
+  }
+  .track > :global(*) {
+    scroll-snap-align: start;
+  }
+  .controls {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    max-width: var(--maxw);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+  .arrow {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 2px solid var(--fg);
+    background: transparent;
+    color: var(--fg);
+    font-size: 1.3rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .arrow:hover {
+    background: var(--gold);
+    color: var(--navy);
+    border-color: var(--navy);
+  }
+</style>

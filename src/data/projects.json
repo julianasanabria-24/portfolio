@@ -1,0 +1,86 @@
+{
+  "categories": ["UX/UI", "Branding", "Ilustración", "3D", "Web"],
+  "projects": [
+    {
+      "slug": "brote",
+      "title": "Brote",
+      "summary": "Identidad y packaging para una marca de snacks saludables.",
+      "year": "2026",
+      "categories": ["Branding", "Ilustración"],
+      "featured": true,
+      "color": "#FFDA3F",
+      "image": "",
+      "result": "+40% de reconocimiento de marca en el test con usuarios",
+      "slides": [
+        { "kicker": "El reto", "title": "Una marca sana que no pareciera aburrida", "text": "Describe aquí el problema y el contexto del proyecto.", "image": "" },
+        { "kicker": "Proceso", "title": "De la investigación al concepto", "text": "Cuenta cómo investigaste, qué descubriste y cómo llegaste a la idea.", "image": "" },
+        { "kicker": "Solución", "title": "Un sistema visual que crece", "text": "Muestra la identidad, el packaging y sus aplicaciones.", "image": "" },
+        { "kicker": "Resultado", "title": "Lo que cambió", "text": "Cierra con resultados medibles y aprendizajes.", "image": "" }
+      ]
+    },
+    {
+      "slug": "pawsome",
+      "title": "Pawsome",
+      "summary": "App para encontrar cuidadores de mascotas en tu barrio.",
+      "year": "2026",
+      "categories": ["UX/UI", "Web"],
+      "featured": true,
+      "color": "#FF8FC7",
+      "image": "",
+      "result": "Tiempo de reserva reducido de 6 a 2 minutos en pruebas",
+      "slides": [
+        { "kicker": "El reto", "title": "Confiar en un desconocido", "text": "Describe aquí el problema y el contexto del proyecto.", "image": "" },
+        { "kicker": "Investigación", "title": "Entrevistas y mapa de empatía", "text": "Qué aprendiste de las personas usuarias.", "image": "" },
+        { "kicker": "Diseño", "title": "Wireframes a prototipo", "text": "Muestra el flujo, la UI y las decisiones clave.", "image": "" },
+        { "kicker": "Resultado", "title": "Test con usuarios", "text": "Cierra con resultados medibles y aprendizajes.", "image": "" }
+      ]
+    },
+    {
+      "slug": "jardin-3d",
+      "title": "Jardín Interior",
+      "summary": "Serie de ilustraciones 3D sobre bienestar y calma.",
+      "year": "2025",
+      "categories": ["3D", "Ilustración"],
+      "featured": true,
+      "color": "#8FD3FF",
+      "image": "",
+      "result": "Seleccionado para la muestra anual de la escuela",
+      "slides": [
+        { "kicker": "La idea", "title": "Espacios que respiran", "text": "Describe aquí el concepto de la serie.", "image": "" },
+        { "kicker": "Proceso", "title": "Modelado, luz y color", "text": "Herramientas usadas y decisiones visuales.", "image": "" },
+        { "kicker": "Resultado", "title": "La serie completa", "text": "Muestra las piezas finales.", "image": "" }
+      ]
+    },
+    {
+      "slug": "eco-feria",
+      "title": "Eco Feria",
+      "summary": "Campaña y web para una feria de productos sostenibles.",
+      "year": "2025",
+      "categories": ["Web", "Branding"],
+      "featured": false,
+      "color": "#FF6F59",
+      "image": "",
+      "result": "1.200 inscripciones en la primera semana",
+      "slides": [
+        { "kicker": "El reto", "title": "Convocar a una comunidad", "text": "Describe aquí el problema y el contexto del proyecto.", "image": "" },
+        { "kicker": "Solución", "title": "Campaña + landing", "text": "Muestra las piezas y la web.", "image": "" },
+        { "kicker": "Resultado", "title": "Impacto", "text": "Cierra con resultados medibles y aprendizajes.", "image": "" }
+      ]
+    },
+    {
+      "slug": "zine-ondas",
+      "title": "Ondas",
+      "summary": "Fanzine ilustrado sobre música y memoria.",
+      "year": "2024",
+      "categories": ["Ilustración"],
+      "featured": false,
+      "color": "#C9B8FF",
+      "image": "",
+      "result": "Edición impresa agotada (150 ejemplares)",
+      "slides": [
+        { "kicker": "La idea", "title": "Canciones que guardan recuerdos", "text": "Describe aquí el concepto.", "image": "" },
+        { "kicker": "Resultado", "title": "El fanzine", "text": "Muestra las páginas finales.", "image": "" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Gestión del portfolio</title>
+    <style>
+      :root {
+        --cream: #fff9f1;
+        --sand: #f1e4d1;
+        --gold: #ffda3f;
+        --coral: #ff6f59;
+        --navy: #14213d;
+        --muted: #5b6684;
+        --line: #e3d6c3;
+        --ok: #2c7a52;
+        --err: #c0392b;
+        --radius: 12px;
+        color-scheme: light;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font: 15px/1.5 system-ui, 'Segoe UI', sans-serif;
+        background: var(--cream);
+        color: var(--navy);
+      }
+      button,
+      input,
+      textarea,
+      select {
+        font: inherit;
+        color: inherit;
+      }
+      button {
+        cursor: pointer;
+      }
+
+      /* Barra superior */
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.75rem 1.25rem;
+        padding: 0.75rem 1.5rem;
+        background: var(--navy);
+        color: var(--cream);
+      }
+      header h1 {
+        font-size: 1.1rem;
+        margin: 0;
+      }
+      .status {
+        font-size: 0.9rem;
+        opacity: 0.85;
+      }
+      .status.dirty {
+        color: var(--gold);
+        opacity: 1;
+      }
+      .spacer {
+        flex: 1;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.5rem 1rem;
+        border-radius: 999px;
+        border: 1.5px solid currentColor;
+        background: transparent;
+        font-weight: 600;
+        text-decoration: none;
+        white-space: nowrap;
+      }
+      header a.btn {
+        color: var(--cream);
+      }
+      .btn-primary {
+        background: var(--gold);
+        border-color: var(--gold);
+        color: var(--navy);
+      }
+      .btn-primary:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+      .btn-small {
+        padding: 0.25rem 0.7rem;
+        font-size: 0.85rem;
+      }
+      .btn-danger {
+        color: var(--err);
+      }
+      .icon {
+        width: 30px;
+        height: 30px;
+        display: inline-grid;
+        place-items: center;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: #fff;
+      }
+      .icon:hover {
+        background: var(--sand);
+      }
+      .icon:disabled {
+        opacity: 0.35;
+        cursor: default;
+      }
+
+      /* Pantalla inicial */
+      .welcome {
+        max-width: 620px;
+        margin: 4rem auto;
+        padding: 2rem;
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+      }
+      .welcome h2 {
+        margin-top: 0;
+      }
+      .welcome code {
+        background: var(--sand);
+        padding: 0.1rem 0.35rem;
+        border-radius: 4px;
+      }
+      .welcome .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+      }
+      .welcome .btn {
+        color: var(--navy);
+      }
+
+      /* Pestañas */
+      nav.tabs {
+        display: flex;
+        gap: 0.25rem;
+        padding: 1rem 1.5rem 0;
+        border-bottom: 1px solid var(--line);
+      }
+      nav.tabs button {
+        padding: 0.6rem 1.1rem;
+        border: 1px solid transparent;
+        border-bottom: none;
+        border-radius: 10px 10px 0 0;
+        background: none;
+        font-weight: 600;
+        color: var(--muted);
+      }
+      nav.tabs button[aria-selected='true'] {
+        background: #fff;
+        border-color: var(--line);
+        color: var(--navy);
+        margin-bottom: -1px;
+      }
+      main {
+        padding: 1.5rem;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      /* Errores */
+      .errors {
+        margin: 1rem 1.5rem 0;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--err);
+        border-radius: var(--radius);
+        background: #fdecea;
+        color: var(--err);
+      }
+      .errors ul {
+        margin: 0.25rem 0 0;
+        padding-left: 1.2rem;
+      }
+
+      /* Formularios */
+      fieldset {
+        margin: 0 0 1.5rem;
+        padding: 1.25rem;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: #fff;
+        min-width: 0;
+      }
+      legend {
+        padding: 0 0.4rem;
+        font-weight: 700;
+        font-size: 1.05rem;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+        gap: 1rem;
+      }
+      .full {
+        grid-column: 1 / -1;
+      }
+      label.f {
+        display: grid;
+        gap: 0.3rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+      label.f small {
+        font-weight: 400;
+        color: var(--muted);
+      }
+      input[type='text'],
+      input[type='email'],
+      input[type='url'],
+      textarea {
+        width: 100%;
+        padding: 0.55rem 0.75rem;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--cream);
+        font-weight: 400;
+      }
+      textarea {
+        resize: vertical;
+        min-height: 4.5rem;
+      }
+      input:focus,
+      textarea:focus {
+        outline: 2px solid var(--coral);
+        outline-offset: 0;
+        background: #fff;
+      }
+      .color-row {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+      }
+      .color-row input[type='color'] {
+        width: 44px;
+        height: 38px;
+        padding: 2px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+      }
+      .check {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+      .checks {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 1rem;
+      }
+      .checks label {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.9rem;
+      }
+
+      /* Listas editables */
+      .item {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 0.9rem;
+        margin-bottom: 0.75rem;
+        background: var(--cream);
+      }
+      .item-head {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        margin-bottom: 0.6rem;
+      }
+      .item-head strong {
+        flex: 1;
+        font-size: 0.9rem;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .item .grid {
+        gap: 0.75rem;
+      }
+
+      /* Etiquetas (chips) */
+      .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        align-items: center;
+        padding: 0.5rem;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--cream);
+      }
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.2rem 0.4rem 0.2rem 0.7rem;
+        border-radius: 999px;
+        background: var(--gold);
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+      .tag button {
+        border: none;
+        background: none;
+        padding: 0 0.2rem;
+        font-size: 1rem;
+        line-height: 1;
+      }
+      .tags input {
+        flex: 1;
+        min-width: 160px;
+        border: none !important;
+        background: transparent !important;
+        outline: none !important;
+        padding: 0.3rem;
+      }
+
+      /* Proyectos */
+      .projects-layout {
+        display: grid;
+        grid-template-columns: 280px minmax(0, 1fr);
+        gap: 1.5rem;
+        align-items: start;
+      }
+      .plist {
+        position: sticky;
+        top: 70px;
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 0.75rem;
+      }
+      .plist ol {
+        list-style: none;
+        margin: 0 0 0.75rem;
+        padding: 0;
+        display: grid;
+        gap: 0.3rem;
+      }
+      .plist li button {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.55rem 0.6rem;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        background: none;
+        text-align: left;
+      }
+      .plist li button:hover {
+        background: var(--cream);
+      }
+      .plist li button[aria-current='true'] {
+        background: var(--cream);
+        border-color: var(--navy);
+      }
+      .swatch {
+        flex: none;
+        width: 22px;
+        height: 22px;
+        border-radius: 6px;
+        border: 1px solid var(--navy);
+      }
+      .plist .name {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-weight: 600;
+      }
+      .star {
+        color: #c99a00;
+      }
+      .editor-head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+      }
+      .editor-head h2 {
+        flex: 1;
+        margin: 0;
+        font-size: 1.4rem;
+      }
+      .editor-head .btn {
+        color: var(--navy);
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .hint {
+        font-size: 0.85rem;
+        color: var(--muted);
+        margin: 0.25rem 0 0.75rem;
+      }
+      .add {
+        color: var(--navy);
+      }
+
+      .toast {
+        position: fixed;
+        left: 50%;
+        bottom: 1.5rem;
+        translate: -50% 0;
+        padding: 0.7rem 1.2rem;
+        border-radius: 999px;
+        background: var(--navy);
+        color: var(--cream);
+        font-weight: 600;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        z-index: 20;
+      }
+      .toast.error {
+        background: var(--err);
+      }
+
+      @media (max-width: 800px) {
+        .projects-layout {
+          grid-template-columns: 1fr;
+        }
+        .plist {
+          position: static;
+        }
+        header,
+        main {
+          padding-inline: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>✶ Gestión del portfolio</h1>
+      <span class="status" id="status">Sin archivos abiertos</span>
+      <span class="spacer"></span>
+      <a class="btn btn-small" href="http://localhost:4321" target="_blank" rel="noopener">Ver web ↗</a>
+      <button class="btn btn-primary" id="save" disabled>Guardar cambios</button>
+    </header>
+
+    <section class="welcome" id="welcome">
+      <h2>Abre tus archivos de datos</h2>
+      <p>
+        Este panel edita <code>info.json</code> y <code>projects.json</code>, que están en la carpeta
+        <code>src/data</code> de tu proyecto.
+      </p>
+      <p id="fs-msg">
+        Pulsa <strong>Abrir carpeta</strong> y selecciona la carpeta <code>src/data</code>. El navegador te pedirá
+        permiso para guardar: acéptalo y los cambios se escribirán directamente en los archivos.
+      </p>
+      <div class="actions">
+        <button class="btn btn-primary" id="open-dir">Abrir carpeta src/data</button>
+        <label class="btn" for="file-input">Subir los dos JSON</label>
+        <input type="file" id="file-input" accept=".json,application/json" multiple hidden />
+      </div>
+      <p class="hint" id="upload-hint">
+        Si usas "Subir los dos JSON", al guardar se descargarán los archivos y tendrás que reemplazarlos tú en
+        <code>src/data</code>.
+      </p>
+    </section>
+
+    <div id="app" hidden>
+      <nav class="tabs" role="tablist">
+        <button role="tab" data-tab="info" aria-selected="true">Mi información</button>
+        <button role="tab" data-tab="projects" aria-selected="false">Proyectos</button>
+      </nav>
+      <div class="errors" id="errors" hidden></div>
+      <main id="view"></main>
+    </div>
+
+    <script src="gestion.js"></script>
+  </body>
+</html>

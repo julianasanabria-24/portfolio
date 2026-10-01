@@ -1,0 +1,258 @@
+/* ===== Tokens ===== */
+:root {
+  --cream: #fff9f1;
+  --sand: #f1e4d1;
+  --gold: #ffda3f;
+  --coral: #ff6f59;
+  --pink: #ff8fc7;
+  --sky: #8fd3ff;
+  --navy: #14213d;
+  --navy-2: #1d2d52;
+
+  --bg: var(--cream);
+  --bg-alt: var(--sand);
+  --fg: var(--navy);
+  --fg-muted: #4a5675;
+  --line: rgba(20, 33, 61, 0.15);
+  --card: #ffffff;
+
+  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-body: 'Space Grotesk', system-ui, sans-serif;
+  --font-hand: 'Rock Salt', 'Comic Sans MS', cursive;
+
+  --radius: 1.25rem;
+  --gutter: clamp(1rem, 4vw, 3rem);
+  --maxw: 1200px;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --bg: var(--navy);
+  --bg-alt: var(--navy-2);
+  --fg: var(--cream);
+  --fg-muted: #b9c1d6;
+  --line: rgba(255, 249, 241, 0.15);
+  --card: #22335c;
+  color-scheme: dark;
+}
+
+/* ===== Base ===== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.4s var(--ease), color 0.4s var(--ease);
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 1.05;
+  margin: 0 0 0.5em;
+}
+
+h1 {
+  font-size: clamp(3rem, 9vw, 7.5rem);
+}
+
+h2 {
+  font-size: clamp(2.25rem, 5.5vw, 4.25rem);
+}
+
+h3 {
+  font-size: clamp(1.4rem, 2.5vw, 1.9rem);
+}
+
+p {
+  margin: 0 0 1em;
+}
+
+:focus-visible {
+  outline: 3px solid var(--coral);
+  outline-offset: 3px;
+}
+
+.container {
+  width: 100%;
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.section {
+  padding-block: clamp(4rem, 10vw, 8rem);
+}
+
+.band-dark {
+  --bg: var(--navy);
+  --fg: var(--cream);
+  --fg-muted: #b9c1d6;
+  --line: rgba(255, 249, 241, 0.15);
+  --card: #22335c;
+  background: var(--bg);
+  color: var(--fg);
+}
+
+:root[data-theme='dark'] .band-dark {
+  --bg: #0c1529;
+}
+
+.eyebrow {
+  font-family: var(--font-hand);
+  font-size: 0.95rem;
+  color: var(--coral);
+  display: inline-block;
+  margin-bottom: 1rem;
+  transform: rotate(-2deg);
+}
+
+.muted {
+  color: var(--fg-muted);
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ===== Botones ===== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.5rem;
+  border-radius: 999px;
+  border: 2px solid var(--fg);
+  background: var(--fg);
+  color: var(--bg);
+  font: 600 1rem var(--font-body);
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease);
+}
+
+.btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0 var(--coral);
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--fg);
+}
+
+.btn--gold {
+  background: var(--gold);
+  border-color: var(--navy);
+  color: var(--navy);
+}
+
+/* ===== Guiños scrapbook ===== */
+.sticker {
+  display: inline-block;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--navy);
+  background: var(--gold);
+  border: 2px solid var(--navy);
+  box-shadow: 3px 3px 0 var(--navy);
+  transform: rotate(var(--r, -2deg));
+  transition: transform 0.3s var(--ease);
+}
+
+.sticker:hover {
+  transform: rotate(0deg) scale(1.06);
+}
+
+.tape {
+  position: relative;
+}
+
+.tape::before {
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  width: 90px;
+  height: 26px;
+  translate: -50% 0;
+  rotate: -4deg;
+  background: rgba(255, 218, 63, 0.75);
+  background-image: repeating-linear-gradient(90deg, transparent 0 6px, rgba(255, 255, 255, 0.25) 6px 8px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+
+.barcode {
+  height: 44px;
+  width: 140px;
+  background: repeating-linear-gradient(
+    90deg,
+    currentColor 0 2px,
+    transparent 2px 4px,
+    currentColor 4px 7px,
+    transparent 7px 9px,
+    currentColor 9px 10px,
+    transparent 10px 13px
+  );
+}
+
+/* ===== Animación de entrada ===== */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}

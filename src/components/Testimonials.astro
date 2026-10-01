@@ -1,0 +1,52 @@
+---
+import info from '../data/info.json';
+import Carousel from './Carousel.astro';
+
+const { testimonials } = info;
+const tints = ['var(--gold)', 'var(--pink)', 'var(--sky)'];
+---
+
+<section class="section band-dark" id="testimonios">
+  <div class="container reveal">
+    <span class="eyebrow">lo que dicen</span>
+    <h2>Testimonios</h2>
+  </div>
+  <Carousel label="Testimonios">
+    {
+      testimonials.map((t, i) => (
+        <figure class="card tape" style={`--t:${tints[i % tints.length]}; rotate:${i % 2 ? 1 : -1}deg`}>
+          <blockquote>“{t.quote}”</blockquote>
+          <figcaption>
+            <strong>{t.author}</strong>
+            <span>{t.role}</span>
+          </figcaption>
+        </figure>
+      ))
+    }
+  </Carousel>
+</section>
+
+<style>
+  .card {
+    margin: 1rem 0;
+    padding: 2.5rem 2rem 2rem;
+    background: var(--t);
+    color: var(--navy);
+    border-radius: var(--radius);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 2rem;
+    min-height: 300px;
+  }
+  blockquote {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.3rem, 2.2vw, 1.6rem);
+    line-height: 1.25;
+  }
+  figcaption {
+    display: grid;
+    font-size: 0.95rem;
+  }
+</style>

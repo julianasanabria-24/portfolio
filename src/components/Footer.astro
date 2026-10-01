@@ -1,0 +1,116 @@
+---
+import site from '../data/info.json';
+
+// Margaritas del footer: posición, tamaño y retraso de animación
+const daisies = [
+  { x: 6, s: 1, d: 0 },
+  { x: 18, s: 0.7, d: 0.6 },
+  { x: 33, s: 1.15, d: 1.2 },
+  { x: 52, s: 0.8, d: 0.3 },
+  { x: 67, s: 1.05, d: 0.9 },
+  { x: 82, s: 0.75, d: 1.5 },
+  { x: 93, s: 0.95, d: 0.4 },
+];
+---
+
+<footer class="footer band-dark">
+  <div class="container">
+    <p class="eyebrow">¿empezamos?</p>
+    <h2>Let's grow your<br /><em>next idea</em></h2>
+    <button class="btn btn--gold" data-open-contact>Start your project</button>
+
+    <div class="meta">
+      <ul>
+        {site.socials.map((s) => <li><a href={s.url} target="_blank" rel="noopener">{s.label}</a></li>)}
+        <li><a href={`mailto:${site.email}`}>{site.email}</a></li>
+      </ul>
+      <p class="muted">© {new Date().getFullYear()} {site.name}</p>
+    </div>
+  </div>
+
+  <div class="garden" aria-hidden="true">
+    <svg class="waves" viewBox="0 0 1200 120" preserveAspectRatio="none">
+      <path d="M0 60 C 200 10 400 110 600 60 S 1000 10 1200 60 V120 H0Z" fill="#2c7a52" />
+      <path d="M0 80 C 250 40 450 120 700 80 S 1050 50 1200 85 V120 H0Z" fill="#3a9a68" />
+    </svg>
+    {
+      daisies.map((f) => (
+        <svg class="daisy" viewBox="-50 -50 100 200" style={`left:${f.x}%; --s:${f.s}; animation-delay:${f.d}s`}>
+          <line x1="0" y1="0" x2="0" y2="150" stroke="#3a9a68" stroke-width="5" />
+          {Array.from({ length: 10 }, (_, i) => (
+            <ellipse rx="9" ry="22" cy="-22" fill="#fff9f1" transform={`rotate(${i * 36})`} />
+          ))}
+          <circle r="12" fill="#ffda3f" />
+        </svg>
+      ))
+    }
+  </div>
+</footer>
+
+<style>
+  .footer {
+    position: relative;
+    overflow: hidden;
+    padding-top: clamp(5rem, 12vw, 9rem);
+    padding-bottom: 11rem;
+    text-align: center;
+  }
+  h2 {
+    font-size: clamp(3rem, 9vw, 7rem);
+  }
+  em {
+    color: var(--gold);
+  }
+  .meta {
+    margin-top: 4rem;
+    display: grid;
+    gap: 0.5rem;
+    justify-items: center;
+    position: relative;
+    z-index: 2;
+  }
+  .meta ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem 1.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .meta a {
+    text-decoration-color: var(--coral);
+    text-underline-offset: 4px;
+  }
+  .garden {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 150px;
+  }
+  .waves {
+    left: 0;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 90px;
+  }
+  .daisy {
+    position: absolute;
+    bottom: 10px;
+    width: calc(56px * var(--s));
+    height: calc(112px * var(--s));
+    overflow: visible;
+    transform-origin: 50% 100%;
+    animation: sway 4s ease-in-out infinite alternate;
+  }
+  @keyframes sway {
+    from {
+      transform: rotate(-5deg);
+    }
+    to {
+      transform: rotate(5deg);
+    }
+  }
+</style>
