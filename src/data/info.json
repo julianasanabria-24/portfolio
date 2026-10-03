@@ -1,20 +1,19 @@
 {
-  "name": "Tu Nombre",
-  "role": "Diseñadora digital",
+  "name": "Juliana",
+  "role": "Creadora Digital",
   "tagline": "Diseño como historia: ideas visuales que conectan con las personas.",
-  "location": "Tu ciudad",
-  "email": "hola@tunombre.com",
+  "location": "Bogotá-Colombia",
+  "email": "julissanabriapa@gmail.com",
   "formEndpoint": "",
   "socials": [
-    { "label": "Instagram", "url": "https://instagram.com/" },
-    { "label": "Behance", "url": "https://behance.net/" },
-    { "label": "LinkedIn", "url": "https://linkedin.com/" }
+    { "label": "Instagram", "url": "https://www.instagram.com/julianaa.sxa/" }
+
   ],
   "audio": {
-    "src": "/audio/trayectoria.mp3",
-    "title": "Mi trayectoria (rap)"
+    "src": "/audio/best-of-me.mp3",
+    "title": "Mi mundo"
   },
-  "photo": "",
+  "photo": "https://cdn.phototourl.com/member/2026-10-03-7f605e5e-3dae-424b-8932-5990c245c45c.jpg",
   "about": {
     "intro": "Soy estudiante de Creación Digital, interesada en explorar diferentes formas de crear y comunicar a través del diseño y las herramientas digitales.",
     "body": [
@@ -49,13 +48,5 @@
       "author": "Nombre Apellido",
       "role": "Fundadora, emprendimiento local"
     }
-  ],
-  "playground": [
-    { "title": "Tipografía cinética", "tag": "Motion", "color": "#FFDA3F" },
-    { "title": "Pruebas de shader", "tag": "Código", "color": "#8FD3FF" },
-    { "title": "Personajes 3D", "tag": "3D", "color": "#FF8FC7" },
-    { "title": "Sketchbook", "tag": "Ilustración", "color": "#FF6F59" },
-    { "title": "Paletas de color", "tag": "Diseño", "color": "#FFF9F1" },
-    { "title": "Micro-interacciones", "tag": "UI", "color": "#FFDA3F" }
   ]
 }

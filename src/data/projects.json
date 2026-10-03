@@ -2,14 +2,14 @@
   "categories": ["UX/UI", "Branding", "Ilustración", "3D", "Web"],
   "projects": [
     {
-      "slug": "brote",
-      "title": "Brote",
+      "slug": "Kumaja",
+      "title": "Kumaja Identidad",
       "summary": "Identidad y packaging para una marca de snacks saludables.",
-      "year": "2026",
+      "year": "2025",
       "categories": ["Branding", "Ilustración"],
       "featured": true,
       "color": "#FFDA3F",
-      "image": "",
+      "image": "https://cdn.phototourl.com/member/2026-10-03-1c65977a-0694-4599-bad8-b4ee575e726c.png",
       "result": "+40% de reconocimiento de marca en el test con usuarios",
       "slides": [
         { "kicker": "El reto", "title": "Una marca sana que no pareciera aburrida", "text": "Describe aquí el problema y el contexto del proyecto.", "image": "" },
@@ -19,14 +19,14 @@
       ]
     },
     {
-      "slug": "pawsome",
-      "title": "Pawsome",
-      "summary": "App para encontrar cuidadores de mascotas en tu barrio.",
-      "year": "2026",
+      "slug": "KidVault",
+      "title": "Kidvault de la mano con Gloabal Seguros",
+      "summary": "DIseño de interfaz para Global Seguros",
+      "year": "2025",
       "categories": ["UX/UI", "Web"],
       "featured": true,
       "color": "#FF8FC7",
-      "image": "",
+      "image": "https://cdn.phototourl.com/member/2026-10-03-c527f079-b018-443a-b978-4d49f59c025b.png",
       "result": "Tiempo de reserva reducido de 6 a 2 minutos en pruebas",
       "slides": [
         { "kicker": "El reto", "title": "Confiar en un desconocido", "text": "Describe aquí el problema y el contexto del proyecto.", "image": "" },
@@ -36,14 +36,14 @@
       ]
     },
     {
-      "slug": "jardin-3d",
-      "title": "Jardín Interior",
-      "summary": "Serie de ilustraciones 3D sobre bienestar y calma.",
+      "slug": "Luz del camino",
+      "title": "Acompañante del usuario en interfaz - propt",
+      "summary": "Ilustracion 3D sobre guia y claridad.",
       "year": "2025",
       "categories": ["3D", "Ilustración"],
       "featured": true,
       "color": "#8FD3FF",
-      "image": "",
+      "image": "https://cdn.phototourl.com/member/2026-10-03-12382b8a-a06a-4c09-96b6-bff9b2a5ef34.png",
       "result": "Seleccionado para la muestra anual de la escuela",
       "slides": [
         { "kicker": "La idea", "title": "Espacios que respiran", "text": "Describe aquí el concepto de la serie.", "image": "" },
@@ -52,14 +52,14 @@
       ]
     },
     {
-      "slug": "eco-feria",
-      "title": "Eco Feria",
-      "summary": "Campaña y web para una feria de productos sostenibles.",
+      "slug": "Summer Coca-Cola",
+      "title": "Coca-Cola publicidad",
+      "summary": "Campaña de verano de Coca-Cola, piezas visuales",
       "year": "2025",
-      "categories": ["Web", "Branding"],
+      "categories": ["Publicity", "Branding"],
       "featured": false,
       "color": "#FF6F59",
-      "image": "",
+      "image": "https://cdn.phototourl.com/member/2026-10-03-36ff4ca5-68e3-4fd1-9f1f-07b52fa3943a.png",
       "result": "1.200 inscripciones en la primera semana",
       "slides": [
         { "kicker": "El reto", "title": "Convocar a una comunidad", "text": "Describe aquí el problema y el contexto del proyecto.", "image": "" },
@@ -68,14 +68,14 @@
       ]
     },
     {
-      "slug": "zine-ondas",
-      "title": "Ondas",
+      "slug": "dale!",
+      "title": "dale! contigo",
       "summary": "Fanzine ilustrado sobre música y memoria.",
-      "year": "2024",
-      "categories": ["Ilustración"],
+      "year": "2025",
+      "categories": ["Publicity"],
       "featured": false,
       "color": "#C9B8FF",
-      "image": "",
+      "image": "https://www.dale.com.co/sites/default/files/2023-12/que_es_dale/banner_principal_dale_que_es_dale_pasa_paga_facil.png",
       "result": "Edición impresa agotada (150 ejemplares)",
       "slides": [
         { "kicker": "La idea", "title": "Canciones que guardan recuerdos", "text": "Describe aquí el concepto.", "image": "" },

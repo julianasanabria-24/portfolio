@@ -1,33 +1,23 @@
 ---
-import site from '../data/info.json';
-
 const links = [
   { label: 'Work', href: '/#work' },
   { label: 'About', href: '/#about' },
-  { label: 'Playground', href: '/playground' },
 ];
 ---
 
 <header class="nav-wrap">
   <nav class="nav" aria-label="Principal">
-    <a class="logo" href="/">{site.name.split(' ')[0]}<span>*</span></a>
-
-    <ul class="links" id="nav-links">
+    <ul class="links">
       {links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
-      <li class="cta-mobile"><button class="btn btn--gold" data-open-contact>Work with me</button></li>
     </ul>
-
-    <div class="actions">
-      <button class="icon-btn" id="theme-toggle" aria-label="Cambiar modo día/noche">
-        <svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5" /><g stroke-width="2" stroke-linecap="round"><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></g></svg>
-        <svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z" /></svg>
-      </button>
-      <button class="btn btn--gold cta-desktop" data-open-contact>Work with me</button>
-      <button class="icon-btn burger" id="burger" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav-links">
-        <span></span><span></span>
-      </button>
-    </div>
+    <button class="btn btn--gold" data-open-contact>Work with me</button>
   </nav>
+
+  <!-- Modo día/noche, separado en la esquina -->
+  <button class="icon-btn theme" id="theme-toggle" aria-label="Cambiar modo día/noche">
+    <svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5" /><g stroke-width="2" stroke-linecap="round"><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></g></svg>
+    <svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z" /></svg>
+  </button>
 </header>
 
 <script>
@@ -39,18 +29,6 @@ const links = [
       localStorage.setItem('theme', next);
     } catch {}
     window.dispatchEvent(new CustomEvent('themechange'));
-  });
-
-  const burger = document.getElementById('burger')!;
-  const links = document.getElementById('nav-links')!;
-  const setOpen = (open: boolean) => {
-    burger.setAttribute('aria-expanded', String(open));
-    burger.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
-    links.classList.toggle('open', open);
-  };
-  burger.addEventListener('click', () => setOpen(!links.classList.contains('open')));
-  links.addEventListener('click', (e) => {
-    if ((e.target as HTMLElement).closest('a, button')) setOpen(false);
   });
 </script>
 
@@ -68,9 +46,8 @@ const links = [
     pointer-events: auto;
     display: flex;
     align-items: center;
-    gap: 1.5rem;
-    width: min(100%, 860px);
-    padding: 0.5rem 0.5rem 0.5rem 1.4rem;
+    gap: 0.5rem;
+    padding: 0.4rem;
     border-radius: 999px;
     background: color-mix(in srgb, var(--bg) 94%, transparent);
     backdrop-filter: blur(14px);
@@ -78,24 +55,16 @@ const links = [
     border: 1.5px solid var(--line);
     box-shadow: 0 8px 30px rgba(20, 33, 61, 0.08);
   }
-  .logo {
-    font-family: var(--font-display);
-    font-size: 1.5rem;
-    text-decoration: none;
-  }
-  .logo span {
-    color: var(--coral);
-  }
   .links {
     display: flex;
     gap: 0.25rem;
     list-style: none;
-    margin: 0 auto;
+    margin: 0;
     padding: 0;
   }
   .links a {
     display: block;
-    padding: 0.5rem 0.9rem;
+    padding: 0.5rem 1rem;
     border-radius: 999px;
     text-decoration: none;
     font-weight: 500;
@@ -104,24 +73,28 @@ const links = [
   .links a:hover {
     background: color-mix(in srgb, var(--fg) 8%, transparent);
   }
-  .actions {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  .actions .btn {
+  .nav .btn {
     padding: 0.6rem 1.2rem;
   }
   .icon-btn {
-    width: 44px;
-    height: 44px;
+    width: 48px;
+    height: 48px;
     display: grid;
     place-items: center;
     border-radius: 50%;
     border: 1.5px solid var(--line);
-    background: transparent;
+    background: color-mix(in srgb, var(--bg) 94%, transparent);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 8px 30px rgba(20, 33, 61, 0.08);
     color: var(--fg);
     cursor: pointer;
+  }
+  .theme {
+    pointer-events: auto;
+    position: absolute;
+    top: 0;
+    right: var(--gutter);
   }
   .icon-btn svg {
     width: 20px;
@@ -133,66 +106,21 @@ const links = [
   :global([data-theme='light']) .moon {
     display: none;
   }
-  .burger,
-  .cta-mobile {
-    display: none;
-  }
-  .burger {
-    gap: 5px;
-    align-content: center;
-  }
-  .burger span {
-    width: 18px;
-    height: 2px;
-    background: currentColor;
-    transition: transform 0.3s var(--ease);
-  }
-  .burger[aria-expanded='true'] span:first-child {
-    transform: translateY(3.5px) rotate(45deg);
-  }
-  .burger[aria-expanded='true'] span:last-child {
-    transform: translateY(-3.5px) rotate(-45deg);
-  }
 
-  @media (max-width: 760px) {
-    .nav {
-      justify-content: space-between;
-    }
-    .burger {
-      display: grid;
-    }
-    .cta-desktop {
-      display: none;
-    }
-    .links {
-      position: absolute;
-      top: calc(100% + 0.5rem);
-      left: 1rem;
-      right: 1rem;
-      flex-direction: column;
-      gap: 0.25rem;
-      padding: 1rem;
-      border-radius: var(--radius);
-      background: var(--bg);
-      border: 1.5px solid var(--line);
-      box-shadow: 0 20px 40px rgba(20, 33, 61, 0.15);
-      opacity: 0;
-      visibility: hidden;
-      transform: translateY(-8px);
-      transition: all 0.3s var(--ease);
-    }
-    .links.open {
-      opacity: 1;
-      visibility: visible;
-      transform: none;
+  @media (max-width: 560px) {
+    .nav-wrap {
+      justify-content: flex-start;
     }
     .links a {
-      font-size: 1.3rem;
-      font-family: var(--font-display);
+      padding: 0.5rem 0.7rem;
     }
-    .cta-mobile {
-      display: block;
-      margin-top: 0.5rem;
+    .nav .btn {
+      padding: 0.55rem 0.9rem;
+      font-size: 0.9rem;
+    }
+    .icon-btn {
+      width: 44px;
+      height: 44px;
     }
   }
 </style>

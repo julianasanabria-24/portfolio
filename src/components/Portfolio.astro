@@ -96,14 +96,20 @@ import ProjectCover from './ProjectCover.astro';
     margin: 0;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
-    gap: clamp(1.5rem, 3vw, 2.5rem);
+    gap: clamp(2rem, 4vw, 3rem) clamp(1.5rem, 3vw, 2.5rem);
+  }
+  /* Tarjetas de igual altura: las etiquetas quedan alineadas abajo en cada fila */
+  .item {
+    display: flex;
+  }
+  .item[hidden] {
+    display: none;
   }
   .item a {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
     text-decoration: none;
-  }
-  .item:nth-child(3n + 2) {
-    translate: 0 2rem;
   }
   .meta {
     display: flex;
@@ -119,7 +125,8 @@ import ProjectCover from './ProjectCover.astro';
     color: var(--fg-muted);
   }
   .item p {
-    margin: 0.35rem 0 0.75rem;
+    flex: 1;
+    margin: 0.35rem 0 1rem;
   }
   .tags {
     list-style: none;
@@ -138,10 +145,5 @@ import ProjectCover from './ProjectCover.astro';
   .empty {
     text-align: center;
     padding: 3rem 0;
-  }
-  @media (max-width: 700px) {
-    .item:nth-child(3n + 2) {
-      translate: none;
-    }
   }
 </style>

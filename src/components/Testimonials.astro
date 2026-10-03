@@ -1,33 +1,116 @@
 ---
 import info from '../data/info.json';
-import Carousel from './Carousel.astro';
 
 const { testimonials } = info;
 const tints = ['var(--gold)', 'var(--pink)', 'var(--sky)'];
+// Se duplica la lista para que la cinta pueda girar sin cortes.
+const loop = [...testimonials, ...testimonials];
 ---
 
 <section class="section band-dark" id="testimonios">
   <div class="container reveal">
     <span class="eyebrow">lo que dicen</span>
     <h2>Testimonios</h2>
+    <p class="hint">Arrastra las notas para leerlas todas.</p>
   </div>
-  <Carousel label="Testimonios">
-    {
-      testimonials.map((t, i) => (
-        <figure class="card tape" style={`--t:${tints[i % tints.length]}; rotate:${i % 2 ? 1 : -1}deg`}>
-          <blockquote>“{t.quote}”</blockquote>
-          <figcaption>
-            <strong>{t.author}</strong>
-            <span>{t.role}</span>
-          </figcaption>
-        </figure>
-      ))
-    }
-  </Carousel>
+
+  <!-- Cinta continua: se mueve sola, se pausa al pasar el mouse y se puede arrastrar -->
+  <div class="marquee" data-marquee role="region" aria-label="Testimonios">
+    <div class="track" data-track>
+      {
+        loop.map((t, i) => (
+          <figure
+            class="card tape"
+            aria-hidden={i >= testimonials.length ? 'true' : undefined}
+            style={`--t:${tints[i % tints.length]}; --r:${i % 2 ? 1.5 : -1.5}deg`}
+          >
+            <blockquote>“{t.quote}”</blockquote>
+            <figcaption>
+              <strong>{t.author}</strong>
+              <span>{t.role}</span>
+            </figcaption>
+          </figure>
+        ))
+      }
+    </div>
+  </div>
 </section>
 
+<script>
+  const root = document.querySelector<HTMLElement>('[data-marquee]');
+  if (root) {
+    const track = root.querySelector<HTMLElement>('[data-track]')!;
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const speed = reduced ? 0 : 0.5; // px por frame
+    let x = 0;
+    let paused = false;
+    let dragging = false;
+    let lastX = 0;
+
+    // Mitad del ancho = una vuelta completa (la lista está duplicada).
+    const wrap = () => {
+      const half = track.scrollWidth / 2;
+      if (x <= -half) x += half;
+      if (x > 0) x -= half;
+    };
+
+    const tick = () => {
+      if (!paused && !dragging) x -= speed;
+      wrap();
+      track.style.transform = `translateX(${x}px)`;
+      requestAnimationFrame(tick);
+    };
+
+    root.addEventListener('pointerenter', () => (paused = true));
+    root.addEventListener('pointerleave', () => (paused = false));
+
+    root.addEventListener('pointerdown', (e) => {
+      dragging = true;
+      lastX = e.clientX;
+      root.setPointerCapture(e.pointerId);
+      root.classList.add('dragging');
+    });
+    root.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      x += e.clientX - lastX;
+      lastX = e.clientX;
+    });
+    const stop = (e: PointerEvent) => {
+      dragging = false;
+      root.classList.remove('dragging');
+      if (e.pointerType !== 'mouse') paused = false;
+    };
+    root.addEventListener('pointerup', stop);
+    root.addEventListener('pointercancel', stop);
+
+    requestAnimationFrame(tick);
+  }
+</script>
+
 <style>
+  .hint {
+    opacity: 0.75;
+    margin: 0;
+  }
+  .marquee {
+    overflow: hidden;
+    padding: 2.5rem 0 1.5rem;
+    cursor: grab;
+    touch-action: pan-y;
+    user-select: none;
+  }
+  .marquee.dragging {
+    cursor: grabbing;
+  }
+  .track {
+    display: flex;
+    gap: 1.5rem;
+    width: max-content;
+    padding-left: 1.5rem;
+    will-change: transform;
+  }
   .card {
+    flex: 0 0 min(80vw, 420px);
     margin: 1rem 0;
     padding: 2.5rem 2rem 2rem;
     background: var(--t);
@@ -38,6 +121,13 @@ const tints = ['var(--gold)', 'var(--pink)', 'var(--sky)'];
     justify-content: space-between;
     gap: 2rem;
     min-height: 300px;
+    rotate: var(--r);
+    transition: rotate 0.3s var(--ease), scale 0.3s var(--ease), box-shadow 0.3s;
+  }
+  .card:hover {
+    rotate: 0deg;
+    scale: 1.04;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
   }
   blockquote {
     margin: 0;
