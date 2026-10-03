@@ -1,4 +1,5 @@
 ---
+import { url } from '../lib/url';
 import { projects, categories } from '../data/projects';
 import ProjectCover from './ProjectCover.astro';
 ---
@@ -20,7 +21,7 @@ import ProjectCover from './ProjectCover.astro';
       {
         projects.map((p) => (
           <li class="item" data-categories={p.categories.join('|')}>
-            <a href={`/work/${p.slug}`}>
+            <a href={url(`/work/${p.slug}`)}>
               <ProjectCover project={p} />
               <div class="meta">
                 <h3>{p.title}</h3>

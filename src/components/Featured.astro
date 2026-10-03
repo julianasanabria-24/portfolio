@@ -1,4 +1,5 @@
 ---
+import { url } from '../lib/url';
 import { projects } from '../data/projects';
 import Carousel from './Carousel.astro';
 import ProjectCover from './ProjectCover.astro';
@@ -15,7 +16,7 @@ const featured = projects.filter((p) => p.featured);
     <Carousel label="Trabajos destacados">
       {
         featured.map((p, i) => (
-          <a class="slide" href={`/work/${p.slug}`}>
+          <a class="slide" href={url(`/work/${p.slug}`)}>
             <ProjectCover project={p} />
             <div class="info">
               <span class="num">0{i + 1}</span>

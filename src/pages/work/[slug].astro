@@ -1,4 +1,5 @@
 ---
+import { url } from '../../lib/url';
 import Base from '../../layouts/Base.astro';
 import ProjectCover from '../../components/ProjectCover.astro';
 import { projects, type Project } from '../../data/projects';
@@ -24,7 +25,7 @@ const total = project.slides.length + 2; // portada + slides + siguiente
     <section class="slide intro" id="s-0" data-slide>
       <div class="container two">
         <div>
-          <a class="back" href="/#work">← Todos los proyectos</a>
+          <a class="back" href={url('/#work')}>← Todos los proyectos</a>
           <span class="eyebrow">{project.year} · {project.categories.join(' / ')}</span>
           <h1>{project.title}</h1>
           <p class="lead">{project.summary}</p>
@@ -46,7 +47,7 @@ const total = project.slides.length + 2; // portada + slides + siguiente
               <p class="muted">{s.text}</p>
             </div>
             <div class="media tape">
-              {s.image ? <img src={s.image} alt={s.title} loading="lazy" decoding="async" /> : <div class="ph">imagen / video</div>}
+              {s.image ? <img src={url(s.image)} alt={s.title} loading="lazy" decoding="async" /> : <div class="ph">imagen / video</div>}
             </div>
           </div>
         </section>
@@ -54,7 +55,7 @@ const total = project.slides.length + 2; // portada + slides + siguiente
     }
 
     <section class="slide next band-dark" id={`s-${total - 1}`} data-slide>
-      <a class="container next-link" href={`/work/${next.slug}`}>
+      <a class="container next-link" href={url(`/work/${next.slug}`)}>
         <span class="eyebrow">siguiente caso</span>
         <h2>{next.title} →</h2>
         <p class="muted">{next.summary}</p>

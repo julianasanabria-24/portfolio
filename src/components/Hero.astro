@@ -1,4 +1,5 @@
 ---
+import { url } from '../lib/url';
 import site from '../data/info.json';
 import Hero3D from './Hero3D.astro';
 ---
@@ -26,7 +27,7 @@ import Hero3D from './Hero3D.astro';
     </ul>
   </div>
 
-  <div class="player ticket" id="player" data-src={site.audio.src}>
+  <div class="player ticket" id="player" data-src={url(site.audio.src)}>
     <button class="play" id="play" aria-label="Reproducir mi trayectoria en rap">
       <svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z" /></svg>
       <svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h4v16H6zM14 4h4v16h-4z" /></svg>

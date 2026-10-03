@@ -1,4 +1,5 @@
 ---
+import { url } from '../lib/url';
 import info from '../data/info.json';
 
 const { about, photo, name } = info;
@@ -9,7 +10,7 @@ const colors = ['var(--gold)', 'var(--pink)', 'var(--sky)', 'var(--coral)', 'var
 <section class="section" id="about">
   <div class="container grid">
     <div class="photo tape reveal">
-      {photo ? <img class="me" src={photo} alt={`Retrato de ${name}`} /> : <div class="placeholder">tu foto<br />aquí</div>}
+      {photo ? <img class="me" src={url(photo)} alt={`Retrato de ${name}`} /> : <div class="placeholder">tu foto<br />aquí</div>}
       <span class="sticker note" style="--r:8deg; background: var(--pink)">curiosa ✶</span>
     </div>
 
